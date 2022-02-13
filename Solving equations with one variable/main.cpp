@@ -8,6 +8,9 @@
 int main()
 {
 	setlocale(LC_ALL, "rus");
+	
+	double eps = getDouble(0,1);
+	
 	char choice;
 	do {
 		choice = getSymbol({ '1','2','3','4' },

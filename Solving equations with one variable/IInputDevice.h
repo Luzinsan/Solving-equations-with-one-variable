@@ -11,6 +11,8 @@ char getSymbol(std::initializer_list<char> list,
 	std::string notification_message = "",
 	std::string error_message = "Недопустимое значение, попробуйте ещё раз.\n->");
 
+double getDouble(double min = 0, double max = 1);
+
 class IInputDevice
 {
 private:
