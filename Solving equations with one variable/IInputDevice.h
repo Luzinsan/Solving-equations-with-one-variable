@@ -9,12 +9,12 @@
 
 char getSymbol(std::initializer_list<char> list,
 	std::string notification_message = "",
-	std::string error_message = "Недопустимое значение, попробуйте ещё раз.\n->");
+	std::string error_message = "РќРµРґРѕРїСѓСЃС‚РёРјРѕРµ Р·РЅР°С‡РµРЅРёРµ, РїРѕРїСЂРѕР±СѓР№С‚Рµ РµС‰С‘ СЂР°Р·.\n->");
 
 double getDouble(double min = 0, 
 	double max = 1, 
 	std::string = "", 
-	std::string error_message = "Недопустимое значение, попробуйте ещё раз.\n->");
+	std::string error_message = "РќРµРґРѕРїСѓСЃС‚РёРјРѕРµ Р·РЅР°С‡РµРЅРёРµ, РїРѕРїСЂРѕР±СѓР№С‚Рµ РµС‰С‘ СЂР°Р·.\n->");
 
 int getNAfterComma();
 
@@ -37,21 +37,21 @@ public:
 		case '2':
 		{
 			std::string filename;
-			std::cout << "Введите имя файла:\n->";
+			std::cout << "Р’РІРµРґРёС‚Рµ РёРјСЏ С„Р°Р№Р»Р°:\n->";
 			getline(std::cin, filename);
 			fin = new std::ifstream(filename);
-			//сохраняем старый поток и перенаправляем стандартный поток на пользовательский файл
+			//СЃРѕС…СЂР°РЅСЏРµРј СЃС‚Р°СЂС‹Р№ РїРѕС‚РѕРє Рё РїРµСЂРµРЅР°РїСЂР°РІР»СЏРµРј СЃС‚Р°РЅРґР°СЂС‚РЅС‹Р№ РїРѕС‚РѕРє РЅР° РїРѕР»СЊР·РѕРІР°С‚РµР»СЊСЃРєРёР№ С„Р°Р№Р»
 			original_cin = redirectInput(fin);
 			break;
 		}
 		case '3':
 			fin = new std::ifstream("input.txt");
-			//сохраняем старый поток и перенаправляем стандартный поток на файл input.txt
+			//СЃРѕС…СЂР°РЅСЏРµРј СЃС‚Р°СЂС‹Р№ РїРѕС‚РѕРє Рё РїРµСЂРµРЅР°РїСЂР°РІР»СЏРµРј СЃС‚Р°РЅРґР°СЂС‚РЅС‹Р№ РїРѕС‚РѕРє РЅР° С„Р°Р№Р» input.txt
 			original_cin = redirectInput(fin);
 			break;
 		case '4': break;
 		default:
-			throw std::invalid_argument("Нет подходящего метода ввода данных...\n");
+			throw std::invalid_argument("РќРµС‚ РїРѕРґС…РѕРґСЏС‰РµРіРѕ РјРµС‚РѕРґР° РІРІРѕРґР° РґР°РЅРЅС‹С…...\n");
 		}
 
 		std::string string;
@@ -61,13 +61,13 @@ public:
 			
 			while (true)
 			{
-				std::cout << "Введите выражение:\n-> ";
+				std::cout << "Р’РІРµРґРёС‚Рµ РІС‹СЂР°Р¶РµРЅРёРµ:\n-> ";
 				
 				getline(std::cin, string);
 				if (string.empty())
-					std::cerr << "Нельзя обработать пустую строку.\n";		
+					std::cerr << "РќРµР»СЊР·СЏ РѕР±СЂР°Р±РѕС‚Р°С‚СЊ РїСѓСЃС‚СѓСЋ СЃС‚СЂРѕРєСѓ.\n";		
 				else expr.push_back(string);
-				method = getSymbol({ '1','2' }, "1) продолжить;\n2) завершить ввод данных\n-> ");
+				method = getSymbol({ '1','2' }, "1) РїСЂРѕРґРѕР»Р¶РёС‚СЊ;\n2) Р·Р°РІРµСЂС€РёС‚СЊ РІРІРѕРґ РґР°РЅРЅС‹С…\n-> ");
 				if (method == '1') continue;
 				else break;
 			}
@@ -79,7 +79,7 @@ public:
 				getline(std::cin, string);
 				if (!string.empty()) { expr.push_back(string); continue; }
 				if (expr.empty())
-					std::cerr << "Нельзя обработать пустую строку.\n";
+					std::cerr << "РќРµР»СЊР·СЏ РѕР±СЂР°Р±РѕС‚Р°С‚СЊ РїСѓСЃС‚СѓСЋ СЃС‚СЂРѕРєСѓ.\n";
 				break; 
 			}
 			break;
@@ -94,16 +94,16 @@ public:
 			std::string filename; 
 			char choice;
 			choice = getSymbol({ '1', '2' }, 
-				"Данный файл не может быть открыт, либо не существует. Попробовать ещё раз?\n1) да\n2) выйти\n->");
+				"Р”Р°РЅРЅС‹Р№ С„Р°Р№Р» РЅРµ РјРѕР¶РµС‚ Р±С‹С‚СЊ РѕС‚РєСЂС‹С‚, Р»РёР±Рѕ РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚. РџРѕРїСЂРѕР±РѕРІР°С‚СЊ РµС‰С‘ СЂР°Р·?\n1) РґР°\n2) РІС‹Р№С‚Рё\n->");
 			if (choice == '1')
 			{
-				std::cout << "Введите имя файла:\n->";
+				std::cout << "Р’РІРµРґРёС‚Рµ РёРјСЏ С„Р°Р№Р»Р°:\n->";
 				getline(std::cin, filename);
 			}
 			else return NULL;
 			fin->open(filename);
 		}
-		//перенаправляем стандартный поток вывода на переданный файл
+		//РїРµСЂРµРЅР°РїСЂР°РІР»СЏРµРј СЃС‚Р°РЅРґР°СЂС‚РЅС‹Р№ РїРѕС‚РѕРє РІС‹РІРѕРґР° РЅР° РїРµСЂРµРґР°РЅРЅС‹Р№ С„Р°Р№Р»
 		std::cin.rdbuf(fin->rdbuf()); 
 		return original_cin;
 	}
@@ -111,7 +111,7 @@ public:
 	~IInputDevice() 
 	{
 		if (original_cin) 
-			std::cin.rdbuf(original_cin); // сбрасываем до стандартного ввода с клавиатуры
+			std::cin.rdbuf(original_cin); // СЃР±СЂР°СЃС‹РІР°РµРј РґРѕ СЃС‚Р°РЅРґР°СЂС‚РЅРѕРіРѕ РІРІРѕРґР° СЃ РєР»Р°РІРёР°С‚СѓСЂС‹
 		if(fin)
 			fin->close();
 	}
