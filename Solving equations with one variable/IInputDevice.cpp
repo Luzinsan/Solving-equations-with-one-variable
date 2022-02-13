@@ -28,10 +28,12 @@ double getDouble(double min, double max, std::string notification_message, std::
 		std::cin >> epsstr;
 		
 		bool point = false, flag = false;
-		for (auto it = epsstr.begin(); it != epsstr.end(); it++)
+		auto it = epsstr.begin();
+		if (it[0] == '-') it++;
+		for (; it != epsstr.end(); it++)
 			if (!isdigit(it[0]) && (it[0] != ',' || point))
 			{
-				std::cout << "Введено недопустимое значение\n";
+				std::cout << error_message;
 				flag = true;
 				break;
 			}
@@ -46,11 +48,12 @@ double getDouble(double min, double max, std::string notification_message, std::
 	return eps;
 }
 
-int getNAfterComma() 
+int getNAfterComma(double eps)
 {
 	char choice = getSymbol({ '1', '2' },
 		"Выберите вид погрешности:\n1) абсолютная погрешность\n2) относительная погрешность\n-> ");
-	double eps = getDouble(0, 1,
+	if(!eps)
+		eps = getDouble(0, 1,
 		"Введите погрешность вычислений (0 < eps < 1) (с разделяющей запятой ',')\n->",
 		"Погрешность не удовлетворяет условию. Попробуйте ещё раз.\n");
 

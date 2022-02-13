@@ -9,7 +9,6 @@ int main()
 {
 	setlocale(LC_ALL, "rus");
 	char choice;
-	int NAfterComma = getNAfterComma();
 	
 	do {
 		choice = getSymbol({ '1','2','3','4' },
