@@ -33,20 +33,32 @@ int main()
 				{
 
 					// метод дихотомии
-					double c;
+					/*double c;
 					while ((b - a) / 2 > eps)
 					{
-						
 						c = (a + b) / 2;
 						if (EvalPolStr(pstr, a, 0) * EvalPolStr(pstr, c, 0) <= 0)
 							b = c;
 						else a = c;
 					}
-					std::cout << expr << " = " << std::setprecision(N) <<  (a + b) / 2 << std::endl;
+					std::cout << expr << " = " << std::setprecision(N) <<  (a + b) / 2 << std::endl;*/
 
 
 					//метод хорд
-
+					double c;
+					double x; // начальное приближение
+					if (EvalPolStr(pstr, a, 0) * EvalPolStr(pstr, a, 2) > 0) 
+						 x = a;
+					else x = b;
+					do{
+						c = a -					EvalPolStr(pstr, a, 0)				* (b - a)
+								/ (EvalPolStr(pstr, b, 0) - EvalPolStr(pstr, a, 0));
+						if (EvalPolStr(pstr, a, 0) * EvalPolStr(pstr, c, 0) <= 0)
+							b = c;
+						else a = c;
+						x = x - EvalPolStr(pstr, x, 0) / EvalPolStr(pstr, x, 1);
+					} while (abs(c - x) > eps);
+					std::cout << expr << " = " << std::setprecision(N) << c << std::endl;
 
 
 
