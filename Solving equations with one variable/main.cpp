@@ -8,10 +8,9 @@
 int main()
 {
 	setlocale(LC_ALL, "rus");
-	
-	double eps = getDouble(0,1);
-	
 	char choice;
+	int NAfterComma = getNAfterComma();
+	
 	do {
 		choice = getSymbol({ '1','2','3','4' },
 			"Введите способ ввода данных:\n1) с клавиатуры;\n2) из файла\n3) стандартный (из файла input.txt)\n4) завершить программу\n-> ");

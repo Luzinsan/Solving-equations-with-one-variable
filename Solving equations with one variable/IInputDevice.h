@@ -11,7 +11,12 @@ char getSymbol(std::initializer_list<char> list,
 	std::string notification_message = "",
 	std::string error_message = "Недопустимое значение, попробуйте ещё раз.\n->");
 
-double getDouble(double min = 0, double max = 1);
+double getDouble(double min = 0, 
+	double max = 1, 
+	std::string = "", 
+	std::string error_message = "Недопустимое значение, попробуйте ещё раз.\n->");
+
+int getNAfterComma();
 
 class IInputDevice
 {
@@ -23,8 +28,7 @@ public:
 
 	IInputDevice(char method = '1') 
 		: original_cin{ NULL },
-		  fin{ NULL }
-		  
+		  fin{ NULL }  
 	{
 		switch (method)
 		{
@@ -54,11 +58,12 @@ public:
 		switch (method) 
 		{
 		case '1':
+			
 			while (true)
 			{
 				std::cout << "Введите выражение:\n-> ";
-				getline(std::cin, string);
 				
+				getline(std::cin, string);
 				if (string.empty())
 					std::cerr << "Нельзя обработать пустую строку.\n";		
 				else expr.push_back(string);
@@ -73,7 +78,6 @@ public:
 				string.clear();
 				getline(std::cin, string);
 				if (!string.empty()) { expr.push_back(string); continue; }
-
 				if (expr.empty())
 					std::cerr << "Нельзя обработать пустую строку.\n";
 				break; 
@@ -85,7 +89,6 @@ public:
 	std::streambuf* redirectInput(std::ifstream* fin = NULL)
 	{
 		std::streambuf* original_cin = std::cin.rdbuf();
-		
 		while (!*fin)
 		{
 			std::string filename; 
@@ -113,15 +116,14 @@ public:
 			fin->close();
 	}
 
-	
-
 	bool isEmptyVectorString()
 	{
 		return expr.empty();
 	}
-	std::vector<std::string> getVectorString() { return expr; }
+	std::vector<std::string> getVectorString() 
+	{ 
+		return expr; 
+	}
 
 };
-
-
 #endif
