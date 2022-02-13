@@ -38,10 +38,6 @@ public:
 		switch (choice)
 		{
 		case '1': 
-			method = getSymbol({'1','2','3','4','5','6'}, 
-				"Введите метод вычисления функции:\n"
-				"Интервальные:\n1) метод дихотомии\n2) метод хорд\n3) метод золотого сечения\n4) комбинированный метод\n"
-				"Итерационные:\n5) метод Ньютона(касательных)\n6) метод итераций\n-> ");
 			a = getDouble(-DBL_MAX, DBL_MAX, "Введите левую границу интервала\n-> ");
 			b = getDouble(-DBL_MAX, DBL_MAX, "Введите правую границу интервала\n-> ");
 			NAfterComma = setNAfterComma();
@@ -157,6 +153,14 @@ public:
 	double getRight() { return b; }
 	double getEps() { return eps; }
 	int getNAfterComma() { return NAfterComma; }
+	char getMethod() 
+	{
+		method = getSymbol({ '1','2','3','4','5','6','7'},
+			"Введите метод вычисления функции:\n"
+			"Интервальные:\n1) метод дихотомии\n2) метод хорд\n3) метод золотого сечения\n4) комбинированный метод\n"
+			"Итерационные:\n5) метод Ньютона(касательных)\n6) метод итераций\n\n7) выйти\n-> ");
+		return method; 
+	}
 
 	int setNAfterComma(double* _eps = NULL)
 	{
