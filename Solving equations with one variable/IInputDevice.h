@@ -1,4 +1,4 @@
-#ifndef IINPUTDEVICE_H
+﻿#ifndef IINPUTDEVICE_H
 #define IINPUTDEVICE_H
 #include <iostream>
 #include <exception>
@@ -17,7 +17,7 @@ double getDouble(double min = -DBL_MAX,
 	std::string = "", 
 	std::string error_message = "Недопустимое значение, попробуйте ещё раз.\n->");
 
-int getNAfterComma(double eps = 0);
+
 
 class IInputDevice
 {
@@ -27,6 +27,7 @@ private:
 	std::vector<std::string> expr;
 	char method;
 	int NAfterComma;
+	double eps;
 	double a, b;
 public:
 
@@ -43,7 +44,7 @@ public:
 				"Итерационные:\n5) метод Ньютона(касательных)\n6) метод итераций\n-> ");
 			a = getDouble(-DBL_MAX, DBL_MAX, "Введите левую границу интервала\n-> ");
 			b = getDouble(-DBL_MAX, DBL_MAX, "Введите правую границу интервала\n-> ");
-			NAfterComma = getNAfterComma();
+			NAfterComma = setNAfterComma();
 			break;
 		case '2':
 		{
@@ -102,7 +103,8 @@ public:
 			a = std::stoi(string);
 			getline(stream, string, ' ');
 			b = std::stoi(string);
-			NAfterComma = getNAfterComma(std::stod(expr[3]));
+			eps = std::stod(expr[3]);
+			NAfterComma = setNAfterComma(&eps);
 			// взяли все нужные данные, теперь переместим выражение в начало вектора и отрежем всё ненужное
 			// это нужно, так как при считывании с клавиатуры, expr может хранить больше выражений, 
 			// нежели считывать из файла только одно
@@ -151,5 +153,29 @@ public:
 		return expr; 
 	}
 
+	double getLeft() { return a; }
+	double getRight() { return b; }
+	double getEps() { return eps; }
+	int getNAfterComma() { return NAfterComma; }
+
+	int setNAfterComma(double* _eps = NULL)
+	{
+		char choice = getSymbol({ '1', '2' },
+			"Выберите вид погрешности:\n1) абсолютная погрешность\n2) относительная погрешность\n-> ");
+		if (!_eps) 
+		{
+			_eps = new double;
+			*_eps = getDouble(0, 1,
+				"Введите погрешность вычислений (0 < eps < 1) (с разделяющей запятой ',')\n->",
+				"Погрешность не удовлетворяет условию. Попробуйте ещё раз.\n");
+			eps = *_eps;
+			delete _eps;
+		}
+		
+		if (choice == '1')
+			return -std::ceil(log(eps));
+		else
+			return  1 - log(1 * eps);
+	}
 };
 #endif

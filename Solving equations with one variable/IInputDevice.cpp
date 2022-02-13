@@ -1,4 +1,4 @@
-#include "IInputDevice.h"
+﻿#include "IInputDevice.h"
 
 char getSymbol(std::initializer_list<char> list,
 	std::string notification_message,
@@ -48,17 +48,3 @@ double getDouble(double min, double max, std::string notification_message, std::
 	return eps;
 }
 
-int getNAfterComma(double eps)
-{
-	char choice = getSymbol({ '1', '2' },
-		"Выберите вид погрешности:\n1) абсолютная погрешность\n2) относительная погрешность\n-> ");
-	if(!eps)
-		eps = getDouble(0, 1,
-		"Введите погрешность вычислений (0 < eps < 1) (с разделяющей запятой ',')\n->",
-		"Погрешность не удовлетворяет условию. Попробуйте ещё раз.\n");
-
-	if (choice == '1')
-		return -std::ceil(log(eps));
-	else
-		return  1 - log(1 * eps);
-}

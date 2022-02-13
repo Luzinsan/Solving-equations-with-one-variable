@@ -1,5 +1,6 @@
 ﻿#include <iostream>
 #include <string>
+#include <iomanip>
 #include "PolStr.h"
 #include "IInputDevice.h"
 
@@ -20,16 +21,39 @@ int main()
 		if (!method.isEmptyVectorString())
 		{
 			std::vector<std::string> exprs = method.getVectorString();
+			double a = method.getLeft(), b = method.getRight();
+			double eps = method.getEps();
+			int N = method.getNAfterComma();
 			for (int i = 0; i < exprs.size(); i++)
 			{
 				std::string expr = exprs[i];
+
 				char* pstr = CreatePolStr(expr.c_str(), 0);
 				if (GetError() == ERR_OK && pstr)
 				{
-					std::cout << pstr << std::endl;
-					std::cout << expr << " = " << EvalPolStr(pstr, 1, 0) << std::endl;
-					std::cout << expr << "' = " << EvalPolStr(pstr, 1, 1) << std::endl;
-					std::cout << expr << "'' = " << EvalPolStr(pstr, 1, 2) << std::endl;
+
+					// метод дихотомии
+					double c;
+					while ((b - a) / 2 > eps)
+					{
+						
+						c = (a + b) / 2;
+						if (EvalPolStr(pstr, a, 0) * EvalPolStr(pstr, c, 0) <= 0)
+							b = c;
+						else a = c;
+					}
+					std::cout << expr << " = " << std::setprecision(N) <<  (a + b) / 2 << std::endl;
+
+
+					//метод хорд
+
+
+
+
+
+
+
+
 					delete[] pstr;
 				}
 				else std::cout << GetError() << std::endl;
