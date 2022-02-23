@@ -1,4 +1,4 @@
-﻿#include "IInputDevice.h"
+#include "IInputDevice.h"
 
 char getSymbol(std::initializer_list<char> list,
 	std::string notification_message,

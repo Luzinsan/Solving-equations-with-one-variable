@@ -2,7 +2,7 @@
 #include <iomanip>
 #include <iostream>
 #include "PolStr.h"
-
+#define MAX_ITER 100000
 class EquationScalar
 {
 private:
@@ -10,20 +10,23 @@ private:
 	const char* _pstr;
 	char _method;
 	double _res;
+	double _eps_new;
 	std::string _expr;
+	int _count;
 public:
-	EquationScalar(const char* pstr, double a, double b, double eps, std::string expr, char method = '1'):
-		_pstr{ pstr }, _a(a), _b(b), _eps(eps), _expr{expr}, _method(method)
+	EquationScalar(const char* pstr, double a, double b, double eps, std::string expr, char method = '1') :
+		_pstr{ pstr }, _a(a), _b(b), _eps(eps), _expr{ expr }, _method(method), _count(0), _eps_new(0), _res(0)
 	{
-		setResult(_method);
+
+		//setResult(_method);
 	}
-	~EquationScalar() 
+	~EquationScalar()
 	{
 		delete[] _pstr;
 	}
 
 
-	std::string getType() const 
+	std::string getType() const
 	{
 		switch (_method)
 		{
@@ -34,20 +37,30 @@ public:
 		case '3':
 			return "Метод Золотого Сечения";
 		case '4':
-			return "Метод Ньютона";
-		case '5':
-			return "Метод Итераций";
-		case '6':
 			return "Комбинированный Метод";
+		case '5':
+			return "Метод Ньютона";
+		case '6':
+			return "Метод Итераций";
 		default:
 			return "Не Обнаружен";
 		}
 	}
 
+	int getCount() 
+	{
+		return _count;
+	}
+
 	friend std::ostream& operator<<(std::ostream& out, const EquationScalar& expr)
 	{
-		int precision = std::cout.precision();
-		out << expr.getType() << ": " << expr._expr << " = " << std::setprecision(precision) << expr._res << std::endl;
+		std::streamsize precision = std::cout.precision();
+		out << expr.getType() << ": \n"
+			<< expr._expr
+			<< "\nx' = " << std::setprecision(precision) << expr._res << "\n"
+			<< "f(x') = " << EvalPolStr(expr._pstr, expr._res, 0)
+			<< "\nВедённая погрешность: " << expr._eps
+			<< "\nПолученная погрешность вычислений: " << expr._eps_new << std::endl;
 		return out;
 	}
 
@@ -66,36 +79,49 @@ public:
 			setGoldenSectionMethod();
 			break;
 		case '4':
-			setNewtonMethod();
+			setCombinedMethod();
 			break;
 		case '5':
-			setIterationMethod();
+			setNewtonMethod();
 			break;
 		case '6':
-			setCombinedMethod();
+			setIterationMethod();
 			break;
 		default:
 			throw std::invalid_argument("Не найден подходящий метод решения");
 		}
 	}
 
-	//метод дихотомии
+	//метод дихотомии - 1
 	double setDichotomyMethod()
 	{
 		double a = _a, b = _b, eps = _eps, c;
-		while ((b - a) / 2 > eps)
+		double f_a = EvalPolStr(_pstr, a, 0), f_b, f_c;
+		int count = 0;
+		while ((b - a) / 2 > eps && count < MAX_ITER)
 		{
 			c = (a + b) / 2;
-			if (EvalPolStr(_pstr, a, 0) * EvalPolStr(_pstr, c, 0) <= 0)
+			f_c = EvalPolStr(_pstr, c, 0);
+			if (f_a * f_c <= 0)
+			{
 				b = c;
-			else a = c;
+				f_b = f_c;
+			}
+			else 
+			{
+				a = c;
+				f_a = f_c;
+			}
+			count++;
 		}
+		_count = count;
 		_res = (a + b) / 2;
+		_eps_new = (b - a) / 2;
 		return _res;
 	}
-	
-	//метод хорд
-	double setChordMethod() 
+
+	//метод хорд - 2
+	double setChordMethod()
 	{
 		double a = _a, b = _b, eps = _eps;
 		double c;
@@ -103,90 +129,153 @@ public:
 		if (EvalPolStr(_pstr, a, 0) * EvalPolStr(_pstr, a, 2) > 0)
 			x = a;
 		else x = b;
+		double f_a = EvalPolStr(_pstr, a, 0),
+			   f_b = EvalPolStr(_pstr, b, 0), 
+			   f_c;
+		int count = 0;
 		do {
-			c = a - EvalPolStr(_pstr, a, 0) * (b - a)
-				/ (EvalPolStr(_pstr, b, 0) - EvalPolStr(_pstr, a, 0));
-			if (EvalPolStr(_pstr, a, 0) * EvalPolStr(_pstr, c, 0) <= 0)
+			c = a - f_a        * (b - a)
+				  / (f_b - f_a);
+			f_c = EvalPolStr(_pstr, c, 0);
+			if (f_a * f_c <= 0)
+			{
 				b = c;
-			else a = c;
+				f_b = f_c;
+			}
+			else 
+			{
+				a = c;
+				f_a = f_c;
+			}
 			x = x - EvalPolStr(_pstr, x, 0) / EvalPolStr(_pstr, x, 1);
-		} while (abs(c - x) > eps);
+			count++;
+		} while (abs(c - x) > eps && count < MAX_ITER);
+		_count = count;
 		_res = c;
+		_eps_new = abs(c - x);
 		return c;
 	}
 
-	//метод золотого сечения
-	double setGoldenSectionMethod() 
+	//метод золотого сечения - 3
+	double setGoldenSectionMethod()
 	{
 		double a = _a, b = _b, eps = _eps;
 		double c, d, h = (sqrt(5) + 1) / 2;
-		while ((b - a) / 2 > eps)
+		double f_a = EvalPolStr(_pstr, a, 0),
+			   f_d;
+		int count = 0;
+		while ((b - a) / 2 > eps && count < MAX_ITER)
 		{
 			d = a + (b - a) / h; // новая правая граница
 			c = a + b - d; // c - a = b - d / или новая левая граница
-			if (EvalPolStr(_pstr, a, 0) * EvalPolStr(_pstr, d, 0) <= 0)
+			f_d = EvalPolStr(_pstr, d, 0);
+
+			if (f_a * f_d <= 0)
 				b = d;
-			else a = c;
+			else 
+			{
+				a = c;
+				f_a = EvalPolStr(_pstr, c, 0);
+			}
+			count++;
 		}
+		_count = count;
 		_res = (a + b) / 2;
-		return _res;
-	}
-	
-	//метод Ньютона
-	double setNewtonMethod() 
-	{
-		double a = _a, b = _b, eps = _eps;
-		double x1;
-		double x0; // начальное приближение
-		if (EvalPolStr(_pstr, a, 0) * EvalPolStr(_pstr, a, 2) > 0)
-			x0 = a;
-		else x0 = b;
-		x1 = x0;
-		do {
-			x0 = x1;
-			x1 = x1 - EvalPolStr(_pstr, x1, 0) / EvalPolStr(_pstr, x1, 1);
-		} while (abs(x1 - x0) > eps);
-		_res = x1;
-		return x1;
-	}
-
-	//метод итераций
-	double setIterationMethod() 
-	{
-		double a = _a, b = _b, eps = _eps;
-		double x0 = (a + b) / 2; // начальное приближение
-		a = EvalPolStr(_pstr, a, 1);
-		b = EvalPolStr(_pstr, b, 1);
-		double x1 = x0;
-		do {
-			x0 = x1;
-			x1 = x1 - EvalPolStr(_pstr, x1, 0) / a > b ? a : b;
-		} while (abs(x1 - x0) > eps);
-		_res = x1;
+		_eps_new = (b - a) / 2;
 		return _res;
 	}
 
-	//комбинированный метод
+
+	//комбинированный метод - 4
 	double setCombinedMethod()
 	{
 		double a = _a, b = _b, eps = _eps;
+		double f_a0 = EvalPolStr(_pstr, a, 0);
 		double c;
+		int count = 0;
 		do {
-			c = a -				EvalPolStr(_pstr, a, 0)						* (b - a)
-					/ (EvalPolStr(_pstr, b, 0) - EvalPolStr(_pstr, a, 0));
-			if (EvalPolStr(_pstr, a, 0) * EvalPolStr(_pstr, a, 2) > 0)
+			c = a - f_a0 * (b - a)
+				/ (EvalPolStr(_pstr, b, 0) - f_a0);
+			if (f_a0 * EvalPolStr(_pstr, a, 2) > 0)
 			{
-				a = a - EvalPolStr(_pstr, a, 0) / EvalPolStr(_pstr, a, 1);
+				a = a - f_a0 / EvalPolStr(_pstr, a, 1);
+				f_a0 = EvalPolStr(_pstr, a, 0);
 				b = c;
 			}
 			else
 			{
 				a = c;
-				b = b - EvalPolStr(_pstr, b, 0) / EvalPolStr(_pstr, b, 1);
+				b -= EvalPolStr(_pstr, b, 0) / EvalPolStr(_pstr, b, 1);
 			}
-
-		} while ((b - a) / 2 > eps);
+			count++;
+		} while ((b - a) / 2 > eps && count < MAX_ITER);
+		_count = count;
 		_res = (a + b) / 2;
+		_eps_new = (b - a) / 2;
+		return _res;
+	}
+
+	//метод Ньютона - 5
+	double setNewtonMethod()
+	{
+		double a = _a, b = _b, eps = _eps;
+		
+		double x0; // начальное приближение
+		if (EvalPolStr(_pstr, a, 0) * EvalPolStr(_pstr, a, 2) > 0)
+			x0 = a;
+		else x0 = b;
+		double x1 = x0;
+		int count = 0;
+		do {
+			x1 = x1 - EvalPolStr(_pstr, x1, 0) / EvalPolStr(_pstr, x1, 1);
+			if (abs(x1 - x0) < eps) break;
+			x0 = x1;
+			count++;
+		} while (count < MAX_ITER);
+		_count = count;
+		_res = x1;
+		_eps_new = abs(x1 - x0);
+		return x1;
+	}
+
+	
+
+
+	double maxf(double a, double b)
+	{
+		const double goldenRatio = (1 + sqrt(5)) / 2; // "Золотое" число
+		double x1, x2; // Точки, делящие текущий отрезок в отношении золотого сечения
+		while (fabs(b - a) > _eps) 
+		{
+			x1 = b - (b - a) / goldenRatio;
+			x2 = a + (b - a) / goldenRatio;
+			if (EvalPolStr(_pstr, x1, 1) <= EvalPolStr(_pstr, x2, 1)) 
+				a = x1;
+			else
+				b = x2;
+		} 
+		return (a+b)/2;
+	}
+	//метод итераций - 6
+	double setIterationMethod() 
+	{
+		double a = _a, b = _b, eps = _eps; 
+		double x0 = a, x1 = (a + b) / 2;
+		double f_x0 = EvalPolStr(_pstr, x0, 1), f_x1 = EvalPolStr(_pstr, x1, 1);
+		if (abs(1 - (1 / f_x0) * f_x1) > 1)
+			throw std::exception("Не сходится...");
+		
+		double max = maxf(a, b);
+		int count = 0;
+		do {
+			x1 = x1 - EvalPolStr(_pstr, x1, 0) / max;
+			if (abs(x0 - x1) <= eps) break;
+			x0 = x1;
+			count++;
+		} while (count < MAX_ITER);
+		_count = count;
+		_eps_new = abs(x0 - x1);
+		_res = x0 - EvalPolStr(_pstr, x0, 0) / max;
 		return _res;
 	}
 };
