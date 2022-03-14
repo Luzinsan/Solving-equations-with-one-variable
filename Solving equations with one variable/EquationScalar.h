@@ -22,7 +22,7 @@ public:
 	}
 	~EquationScalar()
 	{
-		delete[] _pstr;
+		//delete[] _pstr;
 	}
 
 
@@ -64,7 +64,7 @@ public:
 		return out;
 	}
 
-	double setResult(char choice)
+	void setResult(char choice)
 	{
 		_method = choice;
 		switch (_method)
@@ -262,8 +262,6 @@ public:
 		double a = _a, b = _b, eps = _eps; 
 		double x0 = a, x1 = (a + b) / 2;
 		double f_x0 = EvalPolStr(_pstr, x0, 1), f_x1 = EvalPolStr(_pstr, x1, 1);
-		if (abs(1 - (1 / f_x0) * f_x1) > 1)
-			throw std::exception("Не сходится...");
 		
 		double max = maxf(a, b);
 		int count = 0;

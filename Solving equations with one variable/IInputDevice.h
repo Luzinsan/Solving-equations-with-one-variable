@@ -7,6 +7,8 @@
 #include <conio.h>
 #include <vector>
 #include <sstream>
+#include <cfloat>
+#include <cmath>
 //#include <iomanip>
 
 char getSymbol(std::initializer_list<char> list,

@@ -4,7 +4,7 @@ char getSymbol(std::initializer_list<char> list,
 	std::string notification_message,
 	std::string error_message)
 {
-	char choice = NULL;
+	char choice;
 	std::cout << notification_message;
 
 	bool flag = true;

@@ -8,16 +8,19 @@ std::streambuf* redirectOutput(std::ofstream* fout);
 
 int main()
 {
-	setlocale(LC_ALL, "rus");
+	system("chcp 1251 > null");
+	//setlocale(LC_ALL, "rus");
 	char choice;
+
 	
-	//do {
-		//choice = getSymbol({ '1','2','3','4' },
-		//	"Введите способ ввода данных:\n1) с клавиатуры;\n2) из файла\n3) стандартный (из файла input.txt)\n4) завершить программу\n-> ");
-		choice = '3';
-		//if (choice == '4') break;
+	
+	do {
+		choice = getSymbol({ '1','2','3','4' },
+			"Введите способ ввода данных:\n1) с клавиатуры;\n2) из файла\n3) стандартный (из файла input.txt)\n4) завершить программу\n-> ");
+		//choice = '3';
+		if (choice == '4') break;
 		IInputDevice method(choice);
-		
+
 
 		if (!method.isEmptyVectorString())
 		{
@@ -25,7 +28,7 @@ int main()
 			double a = method.getLeft(), b = method.getRight();
 			double eps = method.getEps();
 			int N = method.getNAfterComma();
-			
+
 
 			for (int i = 0; i < exprs.size(); i++)
 			{
@@ -34,23 +37,25 @@ int main()
 				if (GetError() == ERR_OK && pstr)
 				{
 					Timer t;
+					EquationScalar res(pstr, a, b, eps, expr);
 					do {
-						switch(choice) 
+						switch (choice)
 						{
-						case '1': 
+						case '1':
 						{
 							char method = getSymbol({ '1','2','3','4','5','6','7' },
 								"Введите метод вычисления функции:\n"
 								"Интервальные:\n1) метод дихотомии\n2) метод хорд\n3) метод золотого сечения\n4) комбинированный метод\n"
 								"Итерационные:\n5) метод Ньютона(касательных)\n6) метод итераций\n\n7) выйти\n-> ");
 							if (method == '7') break;
-							EquationScalar res(pstr, a, b, eps, expr, method);
-							
+
 							t.reset();
 							res.setResult(choice);
 
 							std::cout << std::setprecision(N) << res
 								<< "\nВремя выполнения: " << t.elapsed() << std::endl;
+							system("pause");
+							system("cls");
 							continue;
 						}
 						case '2': case '3':
@@ -65,16 +70,16 @@ int main()
 							std::streambuf* original_cout = redirectOutput(fout);
 							if (!original_cout) break;
 
-							EquationScalar res(pstr, a, b, eps, expr);
+
 							t.reset();
-							try 
+							try
 							{
 								res.setResult(method.getMethod());
 								std::cout << "\n" << std::setprecision(N) << res
 									<< "Время выполнения: " << t.elapsed()
 									<< "\nКоличество итераций: " << res.getCount() << std::endl;
 							}
-							catch (std::exception err) 
+							catch (std::exception err)
 							{
 								std::cout << "\nException: " << err.what();
 							}
@@ -82,19 +87,26 @@ int main()
 							fout->close();
 							choice = '4';
 						}
-							break;
+						break;
 						case '4':
 							break;
 						}
 						break;
 					} while (true);
-					
+
+
 				}
 				else std::cout << GetError() << std::endl;
+				//free(pstr);
+				expr[0] = '0';
+				pstr[0] = '1';
+				if (pstr) delete[] pstr;
+				//pstr = nullptr;
 			}
 		}
-	
-	//} while (choice);
+
+	} while (choice);
+	system("pause");
 }
 
 std::streambuf* redirectOutput(std::ofstream* fout)
