@@ -1,0 +1,4 @@
+C:/Users/luzin/source/repos/CPP/NMLab/Solving-equations-with-one-variable/Solving equations with one variable/cmake-build-debug/CMakeFiles/PolStr.dir
+C:/Users/luzin/source/repos/CPP/NMLab/Solving-equations-with-one-variable/Solving equations with one variable/cmake-build-debug/CMakeFiles/NMLab.dir
+C:/Users/luzin/source/repos/CPP/NMLab/Solving-equations-with-one-variable/Solving equations with one variable/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/luzin/source/repos/CPP/NMLab/Solving-equations-with-one-variable/Solving equations with one variable/cmake-build-debug/CMakeFiles/rebuild_cache.dir

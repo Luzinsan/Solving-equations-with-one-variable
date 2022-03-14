@@ -1,0 +1,69 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"jsonFile" : "directory-.-Debug-d0094a50bb2071803777.json",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.21"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "NMLab",
+					"targetIndexes" : 
+					[
+						0,
+						1
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "NMLab::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-NMLab-Debug-5e58c03193a9f12e56f7.json",
+					"name" : "NMLab",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "PolStr::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-PolStr-Debug-3f8fbf1dd6cbc7130105.json",
+					"name" : "PolStr",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "C:/Users/luzin/source/repos/CPP/NMLab/Solving-equations-with-one-variable/Solving equations with one variable/cmake-build-debug",
+		"source" : "C:/Users/luzin/source/repos/CPP/NMLab/Solving-equations-with-one-variable/Solving equations with one variable"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 3
+	}
+}
